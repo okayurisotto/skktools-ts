@@ -6,7 +6,7 @@ all: $(addsuffix .js,$(addprefix ./dist/,$(basename $(notdir $(FILES)))))
 define BUILD_TEMPLATE
 .PHONY: $(addsuffix .js,$(addprefix ./dist/,$(basename $(notdir $(1)))))
 $(addsuffix .js,$(addprefix ./dist/,$(basename $(notdir $(1))))):
-	node ./esbuild.js --mode build $$<
+	node ./esbuild.js --mode build $(1)
 endef
 
 $(foreach FILE,$(FILES),$(eval $(call BUILD_TEMPLATE,$(FILE))))

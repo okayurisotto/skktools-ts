@@ -4,9 +4,8 @@ export const OKURI_ARI_KEYWORD = ";; okuri-ari entries.";
 
 export const OKURI_NASI_KEYWORD = ";; okuri-nasi entries.";
 
-export const hashPatterns = [...range({ start: 0, stop: 10 })].map(
-  (num) => `#${num}`
-);
+export const hashPatterns = [...range({ start: 0, stop: 10 })]
+  .map((num) => `#${num}`);
 
 export const filetypes = ["json", "yaml", "text"] as const;
 
@@ -239,9 +238,9 @@ export const hira_kata = [
   { hira: "｜", kata: "｜" },
   { hira: "｝", kata: "｝" },
   { hira: "～", kata: "～" },
-  { hira: '「', kata: "「" },
-  { hira: '」', kata: "」" },
-  { hira: '＂', kata: "＂" },
+  { hira: "「", kata: "「" },
+  { hira: "」", kata: "」" },
+  { hira: "＂", kata: "＂" },
 ];
 
 export const chars = [

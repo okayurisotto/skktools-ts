@@ -8,7 +8,7 @@ export const uniq = (dict: Dictionary): Dictionary => {
       return [...source].every((char) => {
         return chars.includes(char);
       });
-    })
+    }),
   )
     .reduce<Dictionary>((acc, cur) => {
       const prev = acc[acc.length - 1];

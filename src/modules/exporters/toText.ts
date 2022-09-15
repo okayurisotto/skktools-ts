@@ -1,6 +1,6 @@
-import type { Dictionary } from "../../type";
-import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "../../CONSTANT";
-import { sortFn } from "../utils";
+import type { Dictionary } from "~/type.ts";
+import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "~/CONSTANT.ts";
+import { sortFn } from "../utils.ts";
 
 export const toText = (dict: Dictionary): string => {
   const entries = dict.reduce<{

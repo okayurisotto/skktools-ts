@@ -1,4 +1,5 @@
-import { argv, echo, fs, stdin } from "zx";
+import type { Dictionary } from "~/type.ts";
+import { flags, streams } from "~/deps.ts";
 import {
   exporters,
   expr,
@@ -8,9 +9,18 @@ import {
   importers,
   sort,
   uniq,
-} from "./modules";
-import { minus } from "./modules/expr";
-import type { Dictionary } from "./type";
+} from "~/modules/index.ts";
+import { minus } from "~/modules/expr/index.ts";
+
+const argv = flags.parse(Deno.args);
+
+const stdin = async () => {
+  return new TextDecoder().decode(await streams.readAll(Deno.stdin));
+};
+
+const echo = (input: string): void => {
+  Deno.writeSync(Deno.stdout.rid, new TextEncoder().encode(input));
+};
 
 const mode = argv["mode"];
 
@@ -38,9 +48,12 @@ const mode = argv["mode"];
 
           if (idx % 2 === 0) {
             if (prev) {
-              prev.path = cur;
+              prev.path = cur.toString();
             } else {
-              acc.push({ operation: null, path: cur });
+              acc.push({
+                operation: null,
+                path: cur.toString(),
+              });
             }
           } else {
             if (cur !== "+" && cur !== "-") throw Error();
@@ -55,7 +68,7 @@ const mode = argv["mode"];
 
           return [
             operation,
-            importer(fs.readFileSync(path, { encoding: "utf-8" })),
+            importer(Deno.readTextFileSync(path)),
           ];
         })
         .reduce<Dictionary>((acc, [operation, dict]) => {
@@ -82,15 +95,15 @@ const mode = argv["mode"];
     if (filename === undefined) throw Error();
 
     const hashedEntries = getHashedEntries(dict);
-    fs.writeFileSync(filename + ".hashed", exporter(hashedEntries));
+    Deno.writeTextFileSync(filename + ".hashed", exporter(hashedEntries));
 
     const prefixEntries = getPrefixEntries(dict);
-    fs.writeFileSync(filename + ".prefix", exporter(prefixEntries));
+    Deno.writeTextFileSync(filename + ".prefix", exporter(prefixEntries));
 
     const suffixEntries = getSuffixEntries(dict);
-    fs.writeFileSync(filename + ".suffix", exporter(suffixEntries));
+    Deno.writeTextFileSync(filename + ".suffix", exporter(suffixEntries));
 
-    fs.writeFileSync(
+    Deno.writeTextFileSync(
       filename,
       exporter(minus(dict, hashedEntries, prefixEntries, suffixEntries)),
     );

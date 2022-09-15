@@ -1,4 +1,4 @@
-import { range } from "./modules/utils";
+import { range } from "~/modules/utils.ts";
 
 export const OKURI_ARI_KEYWORD = ";; okuri-ari entries.";
 

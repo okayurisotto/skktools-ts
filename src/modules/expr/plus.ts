@@ -1,5 +1,5 @@
-import type { Dictionary } from "../../type";
-import { uniq } from "../uniq";
+import type { Dictionary } from "~/type.ts";
+import { uniq } from "../uniq.ts";
 
 export const plus = (...dicts: Dictionary[]): Dictionary => {
   const [left, right, ...others] = dicts;

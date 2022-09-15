@@ -1,4 +1,4 @@
-import type { Dictionary } from "../type";
+import type { Dictionary } from "~/type.ts";
 
 export const getPrefixEntries = (dict: Dictionary): Dictionary => {
   return dict.filter((entry) => {

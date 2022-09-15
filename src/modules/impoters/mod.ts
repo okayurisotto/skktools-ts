@@ -1,7 +1,7 @@
-import type { Dictionary, Filetype } from "../../type";
-import { fromJson } from "./fromJson";
-import { fromText } from "./fromText";
-import { fromYaml } from "./fromYaml";
+import type { Dictionary, Filetype } from "~/type.ts";
+import { fromJson } from "./fromJson.ts";
+import { fromText } from "./fromText.ts";
+import { fromYaml } from "./fromYaml.ts";
 
 export const importers = new Map<Filetype, (input: string) => Dictionary>([
   ["json", fromJson],

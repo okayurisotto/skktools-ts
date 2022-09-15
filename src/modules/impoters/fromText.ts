@@ -1,5 +1,5 @@
-import type { Dictionary } from "../../type";
-import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "../../CONSTANT";
+import type { Dictionary } from "~/type.ts";
+import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "~/CONSTANT.ts";
 
 export const fromText = (dict: string): Dictionary => {
   return dict

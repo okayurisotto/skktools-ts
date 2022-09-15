@@ -1,2 +1,2 @@
-export { minus } from "./minus";
-export { plus } from "./plus";
+export { minus } from "./minus.ts";
+export { plus } from "./plus.ts";

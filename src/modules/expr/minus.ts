@@ -1,4 +1,4 @@
-import type { Dictionary } from "../../type";
+import type { Dictionary } from "~/type.ts";
 
 export const minus = (...dicts: Dictionary[]): Dictionary => {
   const [left, right, ...others] = dicts;

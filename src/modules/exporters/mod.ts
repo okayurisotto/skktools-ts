@@ -1,7 +1,7 @@
-import type { Dictionary, Filetype } from "../../type";
-import { toJson } from "./toJson";
-import { toText } from "./toText";
-import { toYaml } from "./toYaml";
+import type { Dictionary, Filetype } from "~/type.ts";
+import { toJson } from "./toJson.ts";
+import { toText } from "./toText.ts";
+import { toYaml } from "./toYaml.ts";
 
 export const exporters = new Map<Filetype, (input: Dictionary) => string>([
   ["json", toJson],

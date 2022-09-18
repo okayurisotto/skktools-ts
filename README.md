@@ -2,15 +2,14 @@
 
 ## 走り書き
 
-- `make all`で`./dist/main.js`にビルドされる
-- `node ./dist/main.js`して使う
+- `deno run ./src/main.js`して使う
 - データは基本的に標準入力から入れる
-  - データのタイプは`--from`によって、`json | text | yaml`から指定する
+  - データの種類は`--from`によって、`json | text | yaml`から指定する
 - データは基本的に標準出力へ出される
-  - 出力するデータのタイプは`--to`によって、`json | text | yaml`から指定する
+  - 出力するデータの種類は`--to`によって、`json | text | yaml`から指定する
 - 動作は`--mode`で切り替える
   - `convert`
-    - データのタイプを変換するだけ
+    - データの種類を変換するだけ
   - `expr`
     - ファイルを足し引きする
     - 標準入力からは受け取らず、オプション名なしのコマンドライン引数をファイル名として受け取る
@@ -26,9 +25,9 @@
     - 多分そうそう使わない
 
 ```examples.sh
-$ node ./dist/main.js --from text --to json --mode convert < SKK-JISYO.L.txt > SKK-JISYO.L.json
+$ deno run ./src/main.js --from text --to json --mode convert < SKK-JISYO.L.txt > SKK-JISYO.L.json
 
-$ node ./dist/main.js --from json --to json --mode sort < SKK-JISYO.L.json > SKK-JISYO.L.json@new
+$ deno run ./src/main.js --from json --to json --mode sort < SKK-JISYO.L.json > SKK-JISYO.L.json@new
 
-$ node ./dist/main.js --from json --to json --mode expr -- JISYO_1 + JISYO_2 - WRONG_JISYO
+$ deno run ./src/main.js --from json --to json --mode expr -- JISYO_1 + JISYO_2 - WRONG_JISYO
 ```

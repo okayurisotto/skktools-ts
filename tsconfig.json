@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "ESNext",
-    "moduleResolution": "node"
-  },
-  "exclude": ["./dist/", "./esbuild.js"],
-  "extends": "@tsconfig/strictest"
-}

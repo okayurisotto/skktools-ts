@@ -25,9 +25,9 @@
     - 多分そうそう使わない
 
 ```examples.sh
-$ deno run ./src/main.js --from text --to json --mode convert < SKK-JISYO.L.txt > SKK-JISYO.L.json
+$ deno run --unstable ./src/main.js --from text --to json --mode convert < SKK-JISYO.L.txt > SKK-JISYO.L.json
 
-$ deno run ./src/main.js --from json --to json --mode sort < SKK-JISYO.L.json > SKK-JISYO.L.json@new
+$ deno run --unstable ./src/main.js --from json --to json --mode sort < SKK-JISYO.L.json > SKK-JISYO.L.json@new
 
-$ deno run ./src/main.js --from json --to json --mode expr -- JISYO_1 + JISYO_2 - WRONG_JISYO
+$ deno run --unstable --allow-read ./src/main.js --from json --to json --mode expr -- JISYO_1 + JISYO_2 - WRONG_JISYO
 ```

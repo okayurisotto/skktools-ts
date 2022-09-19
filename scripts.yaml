@@ -1,0 +1,4 @@
+scripts:
+  install:
+    cmd:
+      - deno install --name skktools-ts --allow-read --allow-write --unstable --force ./src/main.ts

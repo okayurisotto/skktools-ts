@@ -1,6 +1,8 @@
 {
   "imports": {
     "@std/": "https://deno.land/std@0.155.0/",
+    "yaml": "https://esm.sh/v95/yaml@2.1.1",
+    "yaml/": "https://esm.sh/v95/yaml@2.1.1/",
     "~/": "./src/"
   },
   "scopes": {}

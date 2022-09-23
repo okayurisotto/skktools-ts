@@ -3,8 +3,8 @@ import { toJson } from "./toJson.ts";
 import { toText } from "./toText.ts";
 import { toYaml } from "./toYaml.ts";
 
-export const exporters = new Map<Filetype, (input: Dictionary) => string>([
-  ["json", toJson],
-  ["text", toText],
-  ["yaml", toYaml],
-]);
+export const exporters: Record<Filetype, (input: Dictionary) => string> = {
+  json: toJson,
+  text: toText,
+  yaml: toYaml,
+};

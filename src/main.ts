@@ -1,5 +1,6 @@
 import type { Dictionary } from "~/type.ts";
 import * as flags from "@std/flags/mod.ts";
+import { assert } from "superstruct";
 import * as streams from "@std/streams/mod.ts";
 import {
   exporters,
@@ -12,8 +13,10 @@ import {
   uniq,
 } from "~/modules/index.ts";
 import { minus } from "~/modules/expr/index.ts";
+import { Args } from "~/structs.ts";
 
-const argv = flags.parse(Deno.args);
+const args = flags.parse(Deno.args);
+assert(args, Args);
 
 const stdin = async () => {
   return new TextDecoder().decode(await streams.readAll(Deno.stdin));
@@ -23,16 +26,11 @@ const echo = (input: string): void => {
   Deno.writeSync(Deno.stdout.rid, new TextEncoder().encode(input));
 };
 
-const mode = argv["mode"];
+const mode = args["mode"];
 
 (async () => {
-  const from = argv["from"];
-  const importer = importers.get(from);
-  if (importer === undefined) throw Error();
-
-  const to = argv["to"];
-  const exporter = exporters.get(to);
-  if (exporter === undefined) throw Error();
+  const importer = importers[args.from];
+  const exporter = exporters[args.to];
 
   if (mode === "convert") {
     echo(exporter(importer(await stdin())));
@@ -40,7 +38,7 @@ const mode = argv["mode"];
 
   if (mode === "expr") {
     echo(exporter(
-      argv._
+      args._
         .reduce<{
           operation?: null | "+" | "-";
           path?: string;
@@ -92,7 +90,8 @@ const mode = argv["mode"];
 
   if (mode === "isolate") {
     const dict = importer(await stdin());
-    const filename = argv["filename"];
+
+    const filename = args["filename"];
     if (filename === undefined) throw Error();
 
     const hashedEntries = getHashedEntries(dict);

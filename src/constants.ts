@@ -7,7 +7,7 @@ export const OKURI_NASI_KEYWORD = ";; okuri-nasi entries.";
 export const hashPatterns = [...range({ start: 0, stop: 10 })]
   .map((num) => `#${num}`);
 
-export const filetypes = ["json", "yaml", "text"] as const;
+export const filetypes = ["json", "yaml", "text", "msgpack"] as const;
 
 export const latin_widelatin = [
   { latin: "!", widelatin: "！" },

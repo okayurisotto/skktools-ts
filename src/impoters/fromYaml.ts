@@ -1,6 +1,6 @@
-import type { Dictionary } from "~/type.ts";
+import type { Importer } from "~/type.ts";
 import * as YAML from "yaml";
 
-export const fromYaml = (dict: string): Dictionary => {
-  return YAML.parse(dict);
+export const fromYaml: Importer = (input) => {
+  return YAML.parse(new TextDecoder().decode(input));
 };

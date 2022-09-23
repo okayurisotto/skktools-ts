@@ -1,9 +1,11 @@
-import type { Dictionary } from "~/type.ts";
+import type { Exporter } from "~/type.ts";
 import * as YAML from "yaml";
 
-export const toYaml = (dict: Dictionary): string => {
-  return YAML.stringify(dict, {
-    defaultKeyType: "PLAIN",
-    defaultStringType: "QUOTE_DOUBLE",
-  });
+export const toYaml: Exporter = (output) => {
+  return new TextEncoder().encode(
+    YAML.stringify(output, {
+      defaultKeyType: "PLAIN",
+      defaultStringType: "QUOTE_DOUBLE",
+    }),
+  );
 };

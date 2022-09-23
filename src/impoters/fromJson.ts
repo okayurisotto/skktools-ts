@@ -1,5 +1,5 @@
-import type { Dictionary } from "~/type.ts";
+import type { Importer } from "~/type.ts";
 
-export const fromJson = (dict: string): Dictionary => {
-  return JSON.parse(dict);
+export const fromJson: Importer = (input) => {
+  return JSON.parse(new TextDecoder().decode(input));
 };

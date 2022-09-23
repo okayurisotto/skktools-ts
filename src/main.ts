@@ -26,11 +26,11 @@ import {
 const args = flags.parse(Deno.args);
 
 const stdin = async () => {
-  return new TextDecoder().decode(await streams.readAll(Deno.stdin));
+  return await streams.readAll(Deno.stdin);
 };
 
-const echo = (input: string): void => {
-  Deno.writeSync(Deno.stdout.rid, new TextEncoder().encode(input));
+const echo = (input: Uint8Array): void => {
+  Deno.writeSync(Deno.stdout.rid, input);
 };
 
 if (is(args, ConvertArgs)) {
@@ -49,7 +49,7 @@ if (is(args, ConvertArgs)) {
 
       return [
         operation,
-        importer(Deno.readTextFileSync(path)),
+        importer(Deno.readFileSync(path)),
       ] as const;
     })
     .reduce<Dictionary>((acc, [operation, dict]) => {
@@ -80,7 +80,7 @@ if (is(args, ConvertArgs)) {
   const filename = path.parse(args["filename"]);
 
   const hashedEntries = getHashedEntries(dict);
-  Deno.writeTextFileSync(
+  Deno.writeFileSync(
     path.format({
       ...filename,
       ext: ".hashed" + filename.ext,
@@ -89,7 +89,7 @@ if (is(args, ConvertArgs)) {
   );
 
   const prefixEntries = getPrefixEntries(dict);
-  Deno.writeTextFileSync(
+  Deno.writeFileSync(
     path.format({
       ...filename,
       ext: ".prefix" + filename.ext,
@@ -98,7 +98,7 @@ if (is(args, ConvertArgs)) {
   );
 
   const suffixEntries = getSuffixEntries(dict);
-  Deno.writeTextFileSync(
+  Deno.writeFileSync(
     path.format({
       ...filename,
       ext: ".suffix" + filename.ext,
@@ -106,7 +106,7 @@ if (is(args, ConvertArgs)) {
     exporter(suffixEntries),
   );
 
-  Deno.writeTextFileSync(
+  Deno.writeFileSync(
     path.format(filename),
     exporter(minus(dict, hashedEntries, prefixEntries, suffixEntries)),
   );

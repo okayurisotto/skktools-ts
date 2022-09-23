@@ -14,3 +14,7 @@ export type DictionaryCandidate = {
   text: string;
   annotations: string[];
 };
+
+export type Importer = (input: Uint8Array) => Dictionary;
+
+export type Exporter = (input: Dictionary) => Uint8Array;

@@ -1,8 +1,8 @@
-import type { Dictionary } from "~/type.ts";
+import type { Exporter } from "~/type.ts";
 import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "~/constants.ts";
 import { sortFn } from "../utils.ts";
 
-export const toText = (dict: Dictionary): string => {
+export const toText: Exporter = (dict) => {
   const entries = dict.reduce<{
     okuriAriEntries: string[];
     okuriNasiEntries: string[];
@@ -33,10 +33,12 @@ export const toText = (dict: Dictionary): string => {
     return acc;
   }, { okuriAriEntries: [], okuriNasiEntries: [] });
 
-  return [
-    OKURI_ARI_KEYWORD,
-    ...entries.okuriAriEntries.sort((a, b) => -sortFn(a, b)),
-    OKURI_NASI_KEYWORD,
-    ...entries.okuriNasiEntries.sort((a, b) => +sortFn(a, b)),
-  ].map((line) => line + "\n").join("");
+  return new TextEncoder().encode(
+    [
+      OKURI_ARI_KEYWORD,
+      ...entries.okuriAriEntries.sort((a, b) => -sortFn(a, b)),
+      OKURI_NASI_KEYWORD,
+      ...entries.okuriNasiEntries.sort((a, b) => +sortFn(a, b)),
+    ].map((line) => line + "\n").join(""),
+  );
 };

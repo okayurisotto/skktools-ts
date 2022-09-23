@@ -1,8 +1,8 @@
-import type { Dictionary } from "~/type.ts";
+import type { Dictionary, Importer } from "~/type.ts";
 import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "~/constants.ts";
 
-export const fromText = (dict: string): Dictionary => {
-  return dict
+export const fromText: Importer = (input) => {
+  return new TextDecoder().decode(input)
     .split("\n")
     .reduce<{
       entries: Dictionary;

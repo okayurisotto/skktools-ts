@@ -1,5 +1,6 @@
 import type { Dictionary } from "~/type.ts";
-import { flags, streams } from "~/deps.ts";
+import * as flags from "@std/flags/mod.ts";
+import * as streams from "@std/streams/mod.ts";
 import {
   exporters,
   expr,

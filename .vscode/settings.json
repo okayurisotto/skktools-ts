@@ -1,5 +1,4 @@
 {
-  "deno.config": "./deno.jsonc",
   "[json]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   },

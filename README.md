@@ -3,7 +3,7 @@
 ## 走り書き
 
 - `deno run ./src/main.js`して使う
-  - `vr run install`で`~/.deno/bin/`にインストールできる
+  - `deno task install`で`~/.deno/bin/`にインストールできる
 - データは基本的に標準入力から入れる
   - データの種類は`--from`によって、`json | text | yaml`から指定する
 - データは基本的に標準出力へ出される

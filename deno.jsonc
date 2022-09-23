@@ -14,5 +14,8 @@
     "noUnusedParameters": true,
     "strict": true
   },
+  "tasks": {
+    "install": "deno install --name skktools-ts --allow-read --allow-write --unstable --force ./src/main.ts"
+  },
   "importMap": "import_map.json"
 }

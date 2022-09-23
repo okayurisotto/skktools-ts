@@ -1,6 +1,6 @@
 import type { Dictionary, DictionaryCandidate } from "~/type.ts";
-import { chars, hira_kata, latin_widelatin } from "~/CONSTANT.ts";
-import { sort } from "./sort.ts";
+import { chars, hira_kata, latin_widelatin } from "~/constants.ts";
+import { sort } from "~/expr/sort.ts";
 
 export const uniq = (dict: Dictionary): Dictionary => {
   return sort(

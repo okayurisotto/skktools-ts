@@ -1,20 +1,20 @@
-import type { Dictionary } from "~/type.ts";
-import * as flags from "@std/flags/mod.ts";
 import { assert, is } from "superstruct";
-import * as streams from "@std/streams/mod.ts";
-import * as path from "@std/path/mod.ts";
 import { chunk } from "@std/collections/mod.ts";
 import { enums, string } from "superstruct";
-import {
-  exporters,
-  expr,
-  getHashedEntries,
-  getPrefixEntries,
-  getSuffixEntries,
-  importers,
-  sort,
-  uniq,
-} from "~/modules/index.ts";
+import { exporters } from "~/exporters/mod.ts";
+import { getHashedEntries } from "~/expr/getHashedEntries.ts";
+import { getPrefixEntries } from "~/expr/getPrefixEntries.ts";
+import { getSuffixEntries } from "~/expr/getSuffixEntries.ts";
+import { importers } from "~/impoters/mod.ts";
+import { minus } from "~/expr/minus.ts";
+import { plus } from "~/expr/plus.ts";
+import { sort } from "~/expr/sort.ts";
+import { uniq } from "~/expr/uniq.ts";
+import * as flags from "@std/flags/mod.ts";
+import * as path from "@std/path/mod.ts";
+import * as streams from "@std/streams/mod.ts";
+import type { Dictionary } from "~/type.ts";
+
 import {
   ConvertArgs,
   ExprArgs,
@@ -54,9 +54,9 @@ if (is(args, ConvertArgs)) {
     })
     .reduce<Dictionary>((acc, [operation, dict]) => {
       if (operation === "+") {
-        return expr.plus(acc, dict);
+        return plus(acc, dict);
       } else {
-        return expr.minus(acc, dict);
+        return minus(acc, dict);
       }
     }, []);
 
@@ -108,7 +108,7 @@ if (is(args, ConvertArgs)) {
 
   Deno.writeTextFileSync(
     path.format(filename),
-    exporter(expr.minus(dict, hashedEntries, prefixEntries, suffixEntries)),
+    exporter(minus(dict, hashedEntries, prefixEntries, suffixEntries)),
   );
 } else {
   Deno.exit(1);

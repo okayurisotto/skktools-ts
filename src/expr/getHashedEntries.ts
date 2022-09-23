@@ -1,5 +1,5 @@
 import type { Dictionary } from "~/type.ts";
-import { hashPatterns } from "~/CONSTANT.ts";
+import { hashPatterns } from "~/constants.ts";
 
 export const getHashedEntries = (entries: Dictionary): Dictionary => {
   return entries

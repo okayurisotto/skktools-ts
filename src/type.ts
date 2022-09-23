@@ -1,4 +1,4 @@
-import type { filetypes } from "~/CONSTANT.ts";
+import type { filetypes } from "~/constants.ts";
 
 export type Filetype = typeof filetypes[number];
 

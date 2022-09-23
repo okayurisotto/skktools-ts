@@ -2,15 +2,9 @@ import type { Dictionary } from "~/type.ts";
 
 export const minus = (...dicts: Dictionary[]): Dictionary => {
   const [left, right, ...others] = dicts;
-  if (left === undefined) {
-    throw Error();
-  }
-  if (right === undefined) {
-    throw Error();
-  }
-  if (others.length !== 0) {
-    return minus(minus(left, right), ...others);
-  }
+  if (left === undefined) throw Error();
+  if (right === undefined) throw Error();
+  if (others.length !== 0) return minus(minus(left, right), ...others);
 
   return left
     .map((a) => {

@@ -1,5 +1,5 @@
 import { array, enums, literal, object, string } from "superstruct";
-import { filetypes } from "~/CONSTANT.ts";
+import { filetypes } from "~/constants.ts";
 
 const base = {
   _: array(string()),

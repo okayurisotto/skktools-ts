@@ -1,5 +1,5 @@
 import type { Dictionary } from "~/type.ts";
-import { sortFn } from "./utils.ts";
+import { sortFn } from "~/utils.ts";
 
 export const sort = (dict: Dictionary): Dictionary => {
   return dict.sort((a, b) => {

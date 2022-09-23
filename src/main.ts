@@ -1,7 +1,10 @@
 import type { Dictionary } from "~/type.ts";
 import * as flags from "@std/flags/mod.ts";
-import { assert } from "superstruct";
+import { assert, is } from "superstruct";
 import * as streams from "@std/streams/mod.ts";
+import * as path from "@std/path/mod.ts";
+import { chunk } from "@std/collections/mod.ts";
+import { enums, string } from "superstruct";
 import {
   exporters,
   expr,
@@ -12,10 +15,15 @@ import {
   sort,
   uniq,
 } from "~/modules/index.ts";
-import { Args } from "~/structs.ts";
+import {
+  ConvertArgs,
+  ExprArgs,
+  IsolateArgs,
+  SortArgs,
+  UniqArgs,
+} from "~/structs.ts";
 
 const args = flags.parse(Deno.args);
-assert(args, Args);
 
 const stdin = async () => {
   return new TextDecoder().decode(await streams.readAll(Deno.stdin));
@@ -25,74 +33,83 @@ const echo = (input: string): void => {
   Deno.writeSync(Deno.stdout.rid, new TextEncoder().encode(input));
 };
 
-const importer = importers[args.from];
-const exporter = exporters[args.to];
+if (is(args, ConvertArgs)) {
+  const importer = importers[args.from];
+  const exporter = exporters[args.to];
 
-if (args.mode === "convert") {
   echo(exporter(importer(await stdin())));
-} else if (args.mode === "expr") {
-  echo(exporter(
-    args._
-      .reduce<{
-        operation?: null | "+" | "-";
-        path?: string;
-      }[]>((acc, cur, idx) => {
-        const prev = acc[acc.length - 1];
+} else if (is(args, ExprArgs)) {
+  const importer = importers[args.from];
+  const exporter = exporters[args.to];
 
-        if (idx % 2 === 0) {
-          if (prev) {
-            prev.path = cur.toString();
-          } else {
-            acc.push({
-              operation: null,
-              path: cur.toString(),
-            });
-          }
-        } else {
-          if (cur !== "+" && cur !== "-") throw Error();
-          acc.push({ operation: cur });
-        }
+  const dict = chunk(["+", ...args._], 2)
+    .map(([operation, path]) => {
+      assert(operation, enums(["+", "-"]));
+      assert(path, string());
 
-        return acc;
-      }, [])
-      .map<[null | "+" | "-", Dictionary]>(({ operation, path }) => {
-        if (operation === undefined) throw Error();
-        if (path === undefined) throw Error();
+      return [
+        operation,
+        importer(Deno.readTextFileSync(path)),
+      ] as const;
+    })
+    .reduce<Dictionary>((acc, [operation, dict]) => {
+      if (operation === "+") {
+        return expr.plus(acc, dict);
+      } else {
+        return expr.minus(acc, dict);
+      }
+    }, []);
 
-        return [
-          operation,
-          importer(Deno.readTextFileSync(path)),
-        ];
-      })
-      .reduce<Dictionary>((acc, [operation, dict]) => {
-        if (operation === null) return dict;
-        if (operation === "+") return expr.plus(acc, dict);
-        if (operation === "-") return expr.minus(acc, dict);
+  echo(exporter(dict));
+} else if (is(args, SortArgs)) {
+  const importer = importers[args.from];
+  const exporter = exporters[args.to];
 
-        return acc;
-      }, []),
-  ));
-} else if (args.mode === "sort") {
   echo(exporter(sort(importer(await stdin()))));
-} else if (args.mode === "uniq") {
+} else if (is(args, UniqArgs)) {
+  const importer = importers[args.from];
+  const exporter = exporters[args.to];
+
   echo(exporter(uniq(importer(await stdin()))));
-} else if (args.mode === "isolate") {
+} else if (is(args, IsolateArgs)) {
+  const importer = importers[args.from];
+  const exporter = exporters[args.to];
+
   const dict = importer(await stdin());
 
-  const filename = args["filename"];
-  if (filename === undefined) throw Error();
+  const filename = path.parse(args["filename"]);
 
   const hashedEntries = getHashedEntries(dict);
-  Deno.writeTextFileSync(filename + ".hashed", exporter(hashedEntries));
+  Deno.writeTextFileSync(
+    path.format({
+      ...filename,
+      ext: ".hashed" + filename.ext,
+    }),
+    exporter(hashedEntries),
+  );
 
   const prefixEntries = getPrefixEntries(dict);
-  Deno.writeTextFileSync(filename + ".prefix", exporter(prefixEntries));
+  Deno.writeTextFileSync(
+    path.format({
+      ...filename,
+      ext: ".prefix" + filename.ext,
+    }),
+    exporter(prefixEntries),
+  );
 
   const suffixEntries = getSuffixEntries(dict);
-  Deno.writeTextFileSync(filename + ".suffix", exporter(suffixEntries));
+  Deno.writeTextFileSync(
+    path.format({
+      ...filename,
+      ext: ".suffix" + filename.ext,
+    }),
+    exporter(suffixEntries),
+  );
 
   Deno.writeTextFileSync(
-    filename,
+    path.format(filename),
     exporter(expr.minus(dict, hashedEntries, prefixEntries, suffixEntries)),
   );
+} else {
+  Deno.exit(1);
 }

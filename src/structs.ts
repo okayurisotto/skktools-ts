@@ -1,13 +1,35 @@
-import { array, enums, object, optional, string } from "superstruct";
+import { array, enums, literal, object, string } from "superstruct";
 import { filetypes } from "~/CONSTANT.ts";
 
-export const Args = object({
+const base = {
   _: array(string()),
 
   from: enums(filetypes),
   to: enums(filetypes),
+};
 
-  mode: enums(["convert", "expr", "sort", "uniq", "isolate"]),
+export const ConvertArgs = object({
+  ...base,
+  mode: literal("convert"),
+});
 
-  filename: optional(string()),
+export const ExprArgs = object({
+  ...base,
+  mode: literal("expr"),
+});
+
+export const SortArgs = object({
+  ...base,
+  mode: literal("sort"),
+});
+
+export const UniqArgs = object({
+  ...base,
+  mode: literal("uniq"),
+});
+
+export const IsolateArgs = object({
+  ...base,
+  mode: literal("isolate"),
+  filename: string(),
 });

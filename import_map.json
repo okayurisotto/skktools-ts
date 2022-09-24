@@ -1,11 +1,11 @@
 {
   "imports": {
-    "~/": "./src/",
-    "@std/": "https://deno.land/std@0.155.0/",
     "@msgpack/msgpack": "https://esm.sh/v95/@msgpack/msgpack@2.8.0",
+    "@std/": "https://deno.land/std@0.155.0/",
     "superstruct": "https://esm.sh/v95/superstruct@0.16.5",
     "yaml": "https://esm.sh/v95/yaml@2.1.1",
-    "yaml/": "https://esm.sh/v95/yaml@2.1.1/"
+    "yaml/": "https://esm.sh/v95/yaml@2.1.1/",
+    "~/": "./src/"
   },
   "scopes": {
     "superstruct": {}

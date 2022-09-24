@@ -14,11 +14,11 @@
     "noUnusedParameters": true,
     "strict": true
   },
+  "importMap": "import_map.json",
   "tasks": {
     "install": "deno install --name skktools-ts --allow-read --allow-write --allow-env --force ./src/main.ts",
     "npm:add": "deno run -A https://esm.sh/v95 add",
     "npm:remove": "deno run -A https://esm.sh/v95 remove",
     "npm:update": "deno run -A https://esm.sh/v95 update"
-  },
-  "importMap": "import_map.json"
+  }
 }

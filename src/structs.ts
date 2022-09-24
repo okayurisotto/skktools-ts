@@ -27,9 +27,3 @@ export const UniqArgs = object({
   ...base,
   mode: literal("uniq"),
 });
-
-export const IsolateArgs = object({
-  ...base,
-  mode: literal("isolate"),
-  filename: string(),
-});

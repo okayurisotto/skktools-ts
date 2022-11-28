@@ -1,67 +1,58 @@
-import type { Dictionary, Importer } from "~/type.ts";
+import type { Importer } from "~/type.ts";
 import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "~/constants.ts";
 
+enum OkuriState {
+  ari,
+  nasi,
+}
+
 export const fromText: Importer = (input) => {
-  return new TextDecoder().decode(input)
-    .split("\n")
-    .reduce<{
-      entries: Dictionary;
-      okuriAri: null | boolean;
-    }>((acc, cur) => {
-      if (cur === OKURI_ARI_KEYWORD) {
-        acc.okuriAri = true;
-        return acc;
-      }
+  const lines = new TextDecoder().decode(input).split("\n");
+  const entries = [];
+  let okuriState: OkuriState | null = null;
 
-      if (cur === OKURI_NASI_KEYWORD) {
-        acc.okuriAri = false;
-        return acc;
-      }
+  for (const line of lines) {
+    if (line === OKURI_ARI_KEYWORD) {
+      okuriState = OkuriState.ari;
+      continue;
+    }
 
-      if (cur.trim() === "") {
-        return acc;
-      }
-      if (cur.startsWith(";")) {
-        return acc;
-      }
-      if (acc.okuriAri === null) {
-        return acc;
-      }
+    if (line === OKURI_NASI_KEYWORD) {
+      okuriState = OkuriState.nasi;
+      continue;
+    }
 
-      const [, left, right] = cur.match(/^(\S+?) \/(.+?)\/$/) ?? [];
-      if (left === undefined) {
-        throw Error(`left:\t${cur}`);
-      }
-      if (right === undefined) {
-        throw Error(`right:\t${cur}`);
-      }
+    if (
+      line.trim() === "" ||
+      line.startsWith(";") ||
+      okuriState === null
+    ) {
+      continue;
+    }
 
-      const [, source, okuri] = (() => {
-        if (acc.okuriAri) {
-          return left.match(/^(\S+?)([a-z])$/) ?? [];
-        } else {
-          return [, left, null];
-        }
-      })();
-      if (source === undefined) {
-        throw Error(`source:\t${cur}`);
+    const [, left, right] = line.match(/^(\S+?) \/(.+?)\/$/) ?? [];
+    if (left === undefined) throw new Error(`left:\t${line}`);
+    if (right === undefined) throw new Error(`right:\t${line}`);
+
+    const [, source, okuri] = (() => {
+      if (okuriState === OkuriState.ari) {
+        return left.match(/^(\S+?)([a-z])$/) ?? [];
+      } else {
+        return [, left, null];
       }
-      if (okuri === undefined) {
-        throw Error(`okuri:\t${cur}`);
-      }
+    })();
+    if (source === undefined) throw new Error(`source:\t${line}`);
+    if (okuri === undefined) throw new Error(`okuri:\t${line}`);
 
-      const candidates = right.split("/")
-        .map((part) => part.split(";"))
-        .map(([text, ...annotations]) => {
-          if (text === undefined) {
-            throw Error(`text:\t${cur}`);
-          }
-          return { text, annotations };
-        });
+    const candidates = [];
+    for (const candidate of right.split("/")) {
+      const [text, ...annotations] = candidate.split(";");
+      if (text === undefined) throw new Error(`text:\t${line}`);
+      candidates.push({ text, annotations });
+    }
 
-      acc.entries.push({ source, okuri, candidates });
+    entries.push({ source, okuri, candidates });
+  }
 
-      return acc;
-    }, { entries: [], okuriAri: null })
-    .entries;
+  return entries;
 };

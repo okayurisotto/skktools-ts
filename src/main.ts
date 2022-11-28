@@ -1,48 +1,54 @@
-import { assert, is } from "superstruct";
 import { chunk } from "@std/collections/chunk.ts";
-import { ConvertArgs, ExprArgs, SortArgs, UniqArgs } from "~/structs.ts";
+import { Command, EnumType } from "cliffy/mod.ts";
 import { echo, stdin } from "~/io.ts";
-import { enums, string } from "superstruct";
 import { exporters } from "~/exporters/mod.ts";
+import { filetypes } from "~/constants.ts";
 import { importers } from "~/impoters/mod.ts";
 import { minus } from "~/expr/minus.ts";
 import { plus } from "~/expr/plus.ts";
 import { sort } from "~/expr/sort.ts";
 import { uniq } from "~/expr/uniq.ts";
-import * as flags from "@std/flags/mod.ts";
 import type { Dictionary } from "~/type.ts";
 
-const args = flags.parse(Deno.args);
+const filetype = new EnumType(filetypes);
 
-const modes = ["convert", "expr", "sort", "uniq"] as const;
-
-const mains: Map<
-  (typeof modes)[number],
-  <T extends ReturnType<typeof flags.parse>>(args: T) => void | Promise<void>
-> = new Map([
-  ["convert", async (args) => {
-    if (!is(args, ConvertArgs)) return;
-
-    const importer = importers[args.from];
-    const exporter = exporters[args.to];
+await new Command()
+  .type("filetype", filetype)
+  .globalOption(
+    "--from <from-filetype:filetype>",
+    "input dictionary file type.",
+    { required: true },
+  )
+  .globalOption(
+    "--to <to-filetype:filetype>",
+    "output dictionary file type.",
+    { required: true },
+  )
+  // convert ---------------------------------------------------
+  .command("convert", "convert dictionary.")
+  .action(async ({ from, to }) => {
+    const importer = importers[from];
+    const exporter = exporters[to];
 
     await stdin()
       .then(importer)
       .then(exporter)
       .then(echo);
-  }],
-  ["expr", (args) => {
-    if (!is(args, ExprArgs)) return;
-
-    const importer = importers[args.from];
-    const exporter = exporters[args.to];
+  })
+  // expr ------------------------------------------------------
+  .command("expr", "merge multiple dictionaries.")
+  .arguments("<args...:string>")
+  .action(({ from, to }, ...args) => {
+    const importer = importers[from];
+    const exporter = exporters[to];
 
     const dict = (() => {
       try {
-        return chunk(["+", ...args._], 2)
+        return chunk(["+", ...args], 2)
           .map(([operation, path]) => {
-            assert(operation, enums(["+", "-"]));
-            assert(path, string());
+            if (typeof operation !== "string") throw new Error();
+            if (["+", "-"].includes(operation)) throw new Error();
+            if (typeof path !== "string") throw new Error();
 
             return [
               operation,
@@ -59,53 +65,34 @@ const mains: Map<
             return acc;
           }, []);
       } catch {
-        console.error(
-          "引数異常：" +
-            "`expr`モードの引数は`<operator filename>+`である必要があります。",
-        );
-        Deno.exit(1);
+        throw new Error("something went wrong.");
       }
     })();
 
     echo(exporter(dict));
-  }],
-  ["sort", async (args) => {
-    if (!is(args, SortArgs)) return;
-
-    const importer = importers[args.from];
-    const exporter = exporters[args.to];
+  })
+  // sort ------------------------------------------------------
+  .command("sort", "sort dictionary entries.")
+  .action(async ({ from, to }) => {
+    const importer = importers[from];
+    const exporter = exporters[to];
 
     await stdin()
       .then(importer)
       .then(sort)
       .then(exporter)
       .then(echo);
-  }],
-  ["uniq", async (args) => {
-    if (!is(args, UniqArgs)) return;
-
-    const importer = importers[args.from];
-    const exporter = exporters[args.to];
+  })
+  // uniq ------------------------------------------------------
+  .command("uniq", "make dictionary entries unique.")
+  .action(async ({ from, to }) => {
+    const importer = importers[from];
+    const exporter = exporters[to];
 
     await stdin()
       .then(importer)
       .then(uniq)
       .then(exporter)
       .then(echo);
-  }],
-]);
-
-if (!is(args["mode"], enums([...mains.keys()]))) {
-  console.error(
-    "引数異常：" +
-      "`mode`は" +
-      modes.map((mode) => "`" + mode + "`").join("または") +
-      "である必要があります。",
-  );
-
-  Deno.exit(1);
-}
-
-for (const main of mains.values()) {
-  await main(args);
-}
+  })
+  .parse(Deno.args);

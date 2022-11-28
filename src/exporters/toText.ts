@@ -1,6 +1,6 @@
 import type { Exporter } from "~/type.ts";
 import { OKURI_ARI_KEYWORD, OKURI_NASI_KEYWORD } from "~/constants.ts";
-import { sortFn } from "../utils.ts";
+import { sortFn } from "~/utils.ts";
 
 export const toText: Exporter = (dict) => {
   const entries = dict.reduce<{
@@ -18,8 +18,7 @@ export const toText: Exporter = (dict) => {
 
       if (annotations.length > 0) {
         for (const annotation of annotations) {
-          entry += ";";
-          entry += annotation;
+          entry += ";" + annotation;
         }
       }
 

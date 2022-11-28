@@ -3,12 +3,8 @@ import { sortFn } from "~/utils.ts";
 
 export const sort = (dict: Dictionary): Dictionary => {
   return dict.sort((a, b) => {
-    if (a.source > b.source) {
-      return +1;
-    }
-    if (a.source < b.source) {
-      return -1;
-    }
+    const source = sortFn(a.source, b.source);
+    if (source !== 0) return source;
 
     if (a.okuri === null) {
       if (b.okuri === null) {
